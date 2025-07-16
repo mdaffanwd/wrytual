@@ -1,8 +1,8 @@
-import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
-import Features from "@/components/Features";
-import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
+import Hero from "@/components/home/Hero";
+import HowItWorks from "@/components/home/HowItWorks";
+import Features from "@/components/home/Features";
+import CTASection from "@/components/home/CTASection";
+import Footer from "@/components/home/Footer";
 
 export default function Home() {
   return (

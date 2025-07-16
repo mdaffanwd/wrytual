@@ -1,4 +1,4 @@
-import TryLogForm from "@/components/TryLogForm";
+import TryLogForm from "@/components/get-started/TryLogForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
