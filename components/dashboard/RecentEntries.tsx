@@ -5,7 +5,7 @@ interface Entry {
     date: string
     title: string
     tags: string[]
-    snippet: string
+    description: string
 }
 
 interface RecentEntriesProps {
@@ -16,7 +16,7 @@ interface RecentEntriesProps {
 export function RecentEntries({ entries, search }: RecentEntriesProps) {
     const filtered = entries.filter(e =>
         e.title.toLowerCase().includes(search.toLowerCase()) ||
-        e.snippet.toLowerCase().includes(search.toLowerCase())
+        e.description.toLowerCase().includes(search.toLowerCase())
     )
 
     return (

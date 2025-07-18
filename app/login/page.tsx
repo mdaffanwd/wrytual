@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { cn } from '@/lib/utils'
 import {
   Card,
   CardHeader,
@@ -16,6 +15,8 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
+
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -99,7 +100,9 @@ export default function LoginPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Logging in...' : 'Login'}
               </Button>
-              <Button variant="outline" className="w-full" type="button" disabled={loading}>
+              <Button variant="outline" className="w-full" type="button"
+                onClick={() => signIn("google")}
+                disabled={loading} >
                 Login with Google
               </Button>
             </div>

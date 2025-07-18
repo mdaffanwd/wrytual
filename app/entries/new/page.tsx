@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import Spinner from "@/components/ui/spinner";
 
 // Zod schema
 const entrySchema = z.object({
@@ -20,8 +22,11 @@ const entrySchema = z.object({
 
 type EntryForm = z.infer<typeof entrySchema>;
 
-export default function NewEntryPage() {
+
+export default function Page() {
     const router = useRouter();
+    const { data: session, status } = useSession()
+
 
     const {
         register,
@@ -31,12 +36,14 @@ export default function NewEntryPage() {
         resolver: zodResolver(entrySchema),
     });
 
+
     const onSubmit = async (data: EntryForm) => {
         const entry = {
             title: data.title,
             description: data.description,
             tags: data.tags?.split(",").map((tag) => tag.trim()) || [],
         };
+        console.log(entry)
 
         await fetch("/api/entries", {
             method: "POST",
@@ -44,11 +51,19 @@ export default function NewEntryPage() {
             headers: {
                 "Content-Type": "application/json",
             },
-        });
-
-        router.push("/dashboard");
+        }).then((res) => {
+            if (!res.ok) throw new Error("Failed to save");
+            return res.json();
+        })
+            .then(() => router.push("/dashboard"))
+            .catch((err) => {
+                console.error(err);
+                alert("Failed to submit entry");
+            });
     };
 
+    if (status === "loading") return <Spinner />
+    if (!session) redirect("/login")
     return (
         <div className="flex justify-center items-center min-h-screen px-4 bg-muted">
             <Card className="w-full max-w-2xl py-4">

@@ -1,11 +1,16 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { StatCard } from "@/components/dashboard/StatCard"
 import { TagList } from "@/components/dashboard/TagList"
 import { SearchBar } from "@/components/dashboard/SearchBar"
 import { RecentEntries } from "@/components/dashboard/RecentEntries"
+import Spinner from "@/components/ui/spinner"
+import { useSession } from "next-auth/react"
+import { redirect, useRouter } from "next/navigation"
+
+export const runtime = 'nodejs';
 
 const mockEntries = [
     {
@@ -13,21 +18,51 @@ const mockEntries = [
         date: "2025-07-13",
         title: "Explored Server Actions in Next.js",
         tags: ["Next.js", "TypeScript"],
-        snippet: "Learned how to handle mutations using server actions instead of traditional API routes."
+        description: "Learned how to handle mutations using server actions instead of traditional API routes."
     },
     {
         id: "2",
         date: "2025-07-12",
         title: "Tamed MongoDB Indexing",
         tags: ["MongoDB", "Performance"],
-        snippet: "Created compound indexes to speed up queries by 70%."
+        description: "Created compound indexes to speed up queries by 70%."
     }
 ]
 
-const tags = ["Next.js", "TypeScript", "MongoDB", "Performance"]
+let tags;
 
-export default function Dashboard() {
+export default function Page() {
+    const { data: session, status } = useSession()
+    // const router = useRouter()
     const [search, setSearch] = useState("")
+    const [entries, setEntries] = useState([])
+    // console.log(entries)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            fetch("/api/entries")
+                .then(res => res.json())
+
+                .then(data => {
+                    const entriesWithDescription = data.map((entry: any) => ({
+                        id: entry._id,
+                        date: new Date(entry.createdAt).toISOString().split('T')[0],
+                        title: entry.title,
+                        tags: entry.tags || [],
+                        description: entry.description
+                    }))
+                    setEntries(entriesWithDescription)
+                }).finally(() => setLoading(false))
+        }
+    }, [status])
+
+    tags = Array.from(new Set(entries.flatMap((e: any) => e.tags || [])))
+
+    if (status === "loading") return <Spinner />
+    if (!session) {
+        redirect("/login")
+    }
 
     return (
         <div className="p-6 space-y-6 mx-auto max-w-6xl">
@@ -53,7 +88,7 @@ export default function Dashboard() {
 
             <div>
                 <SearchBar search={search} setSearch={setSearch} />
-                <RecentEntries entries={mockEntries} search={search} />
+                <RecentEntries entries={entries} search={search} />
             </div>
         </div>
     )
