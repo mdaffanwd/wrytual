@@ -11,7 +11,7 @@ export function DashboardHeader() {
             <div className="ml-auto mr-2 sm:mr-5">
                 <ModeToggle />
             </div>
-            <Link href="/entries/new">
+            <Link href="/entries/new-entry">
                 <Button>+ New Entry</Button>
             </Link>
         </div>
