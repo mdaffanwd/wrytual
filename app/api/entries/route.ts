@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
             title,
             description,
             tags,
-            userId: user._id,
+            user: user._id,
         })
 
         return NextResponse.json(newEntry, { status: 201 })
@@ -46,7 +46,7 @@ export async function GET() {
         }
 
         await connectToDatabase()
-        const entries = await Entry.find({ userId: session.user.id }).sort({ createdAt: -1 })
+        const entries = await Entry.find({ user: session.user.id }).sort({ createdAt: -1 })
 
         return NextResponse.json(entries)
     } catch (error) {

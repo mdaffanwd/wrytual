@@ -1,4 +1,4 @@
-import { EntryCard } from "./EntryCard"
+import { EntryCard } from "../entries/EntryCard"
 
 interface Entry {
     id: string
@@ -11,9 +11,10 @@ interface Entry {
 interface RecentEntriesProps {
     entries: Entry[]
     search: string
+    refetch?: () => void
 }
 
-export function RecentEntries({ entries, search }: RecentEntriesProps) {
+export function RecentEntries({ entries, search, refetch }: RecentEntriesProps) {
     const filtered = entries.filter(e =>
         e.title.toLowerCase().includes(search.toLowerCase()) ||
         e.description.toLowerCase().includes(search.toLowerCase())
@@ -22,7 +23,7 @@ export function RecentEntries({ entries, search }: RecentEntriesProps) {
     return (
         <div className="space-y-4">
             {filtered.map(entry => (
-                <EntryCard key={entry.id} {...entry} />
+                <EntryCard key={entry.id} {...entry} {...entry} onDelete={refetch} />
             ))}
         </div>
     )

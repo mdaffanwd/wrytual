@@ -15,7 +15,7 @@ interface EntryListProps {
     entries: Entry[]
 }
 
-export default function Page({ entries: initialEntries }: EntryListProps) {
+export default function EntryList({ entries: initialEntries }: EntryListProps) {
     const [entries, setEntries] = useState(initialEntries)
 
     const handleDelete = (id: string) => {

@@ -12,7 +12,7 @@ export default function CTASection() {
             </p>
             <div className="mt-6">
 
-                <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100">
+                <Button asChild size="lg" className="bg-white dark:text-gray-800 text-primary hover:bg-gray-100">
                     <Link href={'/signup'}>
                         Create Account
                     </Link>

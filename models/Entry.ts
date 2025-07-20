@@ -4,11 +4,11 @@ export interface IEntry extends Document {
     title: string;
     description: string;
     tags: string[];
-    userId?: string;
+    user?: string;
 }
 
 const EntrySchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
     tags: [

@@ -9,9 +9,13 @@ export function TagList({ tags }: TagListProps) {
         <div>
             <h2 className="text-lg font-semibold mb-2">Tags</h2>
             <div className="flex flex-wrap gap-2">
-                {tags.map(tag => (
-                    <Badge key={tag} variant="outline">{tag}</Badge>
-                ))}
+                {tags.map(tag => {
+                    if (tag.trim() !== "") {
+                        return (
+                            <Badge key={tag} variant="outline">{tag}</Badge>
+                        )
+                    }
+                })}
             </div>
         </div>
     )
