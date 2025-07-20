@@ -49,7 +49,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await connectToDatabase()
 
         const entry = await Entry.findOneAndUpdate(
-            { _id: params.id, userId: session.user.id },
+            { _id: params.id, user: session.user.id },
             {
                 title,
                 description,
@@ -68,5 +68,26 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             { status: 500 }
         );
     }
+}
 
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const session = await getServerSession(authOptions)
+        if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+        await connectToDatabase()
+        const entry = await Entry.findOne({
+            _id: params.id,
+            user: session.user.id,
+        })
+
+        if (!entry) {
+            return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        }
+
+        return NextResponse.json(entry)
+    } catch (error: any) {
+        console.error("GET entry error:", error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    }
 }
