@@ -81,6 +81,7 @@ export function EditEntryForm({ entry, isEditing = false }: { entry?: Entry; isE
             </div>
 
             <div className="space-y-2">
+                <Label htmlFor="tags">Tags (comma separated)</Label>
                 <Input
                     placeholder="Tags (comma-separated)"
                     value={tags}
