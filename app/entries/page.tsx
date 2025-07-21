@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import connectToDatabase from "@/lib/db";
 import { Entry } from "@/models/Entry";
 import EntryList from "@/components/entries/EntryList";
+import { ArrowLeft } from "lucide-react";
+
+
 
 interface EntryData {
     _id: string;
@@ -14,15 +17,16 @@ interface EntryData {
 }
 
 interface SearchProps {
-    searchParams?: {
+    searchParams?: Promise<{
         page?: string;
         filter?: string;
-    };
+    }>;
 }
 
 export default async function Page({ searchParams }: SearchProps) {
     const PAGE_SIZE = 15;
-    const page = Number(searchParams?.page || "1");
+    const resolvedSearchParams = await searchParams;
+    const page = Number(resolvedSearchParams?.page || "1");
 
     await connectToDatabase();
 
@@ -35,7 +39,7 @@ export default async function Page({ searchParams }: SearchProps) {
 
     const filter: any = {};
 
-    if (searchParams?.filter === "today") {
+    if (resolvedSearchParams?.filter === "today") {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
@@ -63,6 +67,20 @@ export default async function Page({ searchParams }: SearchProps) {
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">
+             <Button>
+                    <Link href="/dashboard">
+                     {/* <svg xmlns="http://www.w3.org/2000/svg"
+                      width="24" height="24" viewBox="0 0 24 24" 
+                      fill="none" stroke="currentColor" 
+                      stroke-width="2" stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      class="lucide lucide-arrow-left-icon lucide-arrow-left">
+                    <path d="m12 19-7-7 7-7"/>
+                    <path d="M19 12H5"/></svg>
+                    // */}
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    </Link>
+                </Button>
             <h1 className="text-3xl font-bold mb-6">Your LearnLog Entries</h1>
 
             <EntryList entries={entries} />
@@ -76,10 +94,11 @@ export default async function Page({ searchParams }: SearchProps) {
                 <span className="text-muted-foreground text-sm">
                     Page {page} of {totalPages}
                 </span>
-
+               
                 <Button variant="outline" disabled={page === totalPages}>
                     <Link href={`/entries?page=${page + 1}`}>Next →</Link>
                 </Button>
+                
             </div>
         </div>
     );

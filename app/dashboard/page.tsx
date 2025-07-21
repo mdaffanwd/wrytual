@@ -74,7 +74,7 @@ export default function Page() {
     return (
         <div className="p-6 space-y-6 mx-auto max-w-6xl">
             <DashboardHeader />
-
+            
             {/* 📊 Stats Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <TodayStats entries={entries} />

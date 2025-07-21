@@ -9,10 +9,15 @@ export function DashboardHeader() {
         <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Dashboard</h1>
             <div className="ml-auto mr-2 sm:mr-5">
-                <ModeToggle />
+                {/* <ModeToggle />   */}
             </div>
             <Link href="/entries/new-entry">
                 <Button>+ New Entry</Button>
+            </Link>
+            <Link href="/api/auth/signout">
+                <Button variant="outline" className="ml-2">
+                    Signout
+                </Button>
             </Link>
         </div>
     )
