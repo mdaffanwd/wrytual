@@ -23,7 +23,7 @@ export default function Page() {
 
     const [search, setSearch] = useState("")
     const [entries, setEntries] = useState([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     // 📥 Fetch entries when authenticated
     useEffect(() => {

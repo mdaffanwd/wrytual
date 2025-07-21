@@ -39,7 +39,7 @@ export default function Page() {
             <Card className="w-full max-w-2xl py-4">
                 <CardContent className="p-6 space-y-6">
                     <h1 className="text-2xl font-bold mb-4">Edit Entry</h1>
-                    <EditEntryForm entry={entry} isEditing />
+                    <EditEntryForm entry={entry} />
                 </CardContent>
             </Card>
 

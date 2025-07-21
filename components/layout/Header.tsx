@@ -16,14 +16,22 @@ export default function Header() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
 
+    // I wanna hide header on these routes
+    const hideOnPaths = ["/login", "/signup", "/entries/new-entry"];
+    const isEditPage = pathname?.includes("/edit/");
+
+    console.log(pathname)
+
+    if (hideOnPaths.includes(pathname) || isEditPage) return null;
+
     const navLinks = [
         { href: "/", label: "Home" },
         { href: "/dashboard", label: "Dashboard" },
     ];
 
     return (
-        <header className="fixed top-0 left-0 w-full z-50 bg-background/90 border-b shadow-sm backdrop-blur">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <header className="w-full z-50 bg-background/90 border-b shadow-sm backdrop-blur">
+            <div className="container mx-auto px-4 py-5 flex items-center justify-between">
                 {/* Left: Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" aria-label="Go to homepage">

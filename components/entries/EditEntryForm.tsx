@@ -38,14 +38,12 @@ export function EditEntryForm({ entry, isEditing = false }: { entry?: Entry; isE
         }
 
         try {
-            const url = isEditing && entry?._id
-                ? `/api/entries/${entry._id}`
-                : `/api/entries`
+            // const url = isEditing && entry?._id
+            //     ? `/api/entries/${entry._id}`
+            //     : `/api/entries/new-entry`
 
-            const method = isEditing ? "PATCH" : "POST"
-
-            const res = await fetch(url, {
-                method,
+            const res = await fetch(`/api/entries/${entry?._id}`, {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             })
@@ -89,9 +87,22 @@ export function EditEntryForm({ entry, isEditing = false }: { entry?: Entry; isE
                 />
             </div>
 
-            <Button type="submit" className="w-full">
-                {isEditing ? "Update Entry" : "Create Entry"}
-            </Button>
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 pt-4">
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => router.back()}
+                    className="w-full sm:w-auto">
+                    Cancel
+                </Button>
+                <Button
+                    type="submit"
+                    className="w-full sm:w-auto"
+                >
+                    {/* {isEditing ? "Update Entry" : "Create Entry"} */}
+                    Update Entry
+                </Button>
+            </div>
         </form>
     )
 }
