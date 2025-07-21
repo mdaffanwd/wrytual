@@ -7,7 +7,6 @@ import { useRouter, redirect } from "next/navigation"
 // 🧩 Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { TagList } from "@/components/dashboard/TagList"
-import { SearchBar } from "@/components/dashboard/SearchBar"
 import { RecentEntries } from "@/components/dashboard/RecentEntries"
 import Spinner from "@/components/ui/spinner"
 
@@ -87,7 +86,8 @@ export default function Page() {
 
             {/* 🔍 Search + 🕘 Recent Entries */}
             <div>
-                <SearchBar search={search} setSearch={setSearch} />
+                <h1 className="text-2xl font-bold mb-4">Recent Entries</h1>
+                {/* <SearchBar search={search} setSearch={setSearch} /> */}
                 <RecentEntries entries={entries} search={search} refetch={fetchEntries} />
             </div>
         </div>

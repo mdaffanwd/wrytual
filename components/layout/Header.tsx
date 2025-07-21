@@ -20,8 +20,6 @@ export default function Header() {
     const hideOnPaths = ["/login", "/signup", "/entries/new-entry"];
     const isEditPage = pathname?.includes("/edit/");
 
-    console.log(pathname)
-
     if (hideOnPaths.includes(pathname) || isEditPage) return null;
 
     const navLinks = [
@@ -30,8 +28,8 @@ export default function Header() {
     ];
 
     return (
-        <header className="w-full z-50 bg-background/90 border-b shadow-sm backdrop-blur">
-            <div className="container mx-auto px-4 py-5 flex items-center justify-between">
+        <header className="z-50 min-w-screen bg-background/90 border-b shadow-sm backdrop-blur">
+            <div className="max-w-7xl mx-auto w-full px-2 sm:p-4 flex items-center justify-between">
                 {/* Left: Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" aria-label="Go to homepage">

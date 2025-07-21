@@ -1,31 +1,39 @@
-import { getToken } from "next-auth/jwt"
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-    const token = await getToken({ req })
-    const { pathname } = req.nextUrl
+    const token = await getToken({ req });
+    const { pathname } = req.nextUrl;
 
-    // 🔐 Block access to dashboard/profile if not authenticated
-    const protectedRoutes = ["/dashboard", "/entries/new", "/profile"]
+    // Routes that need auth
+    const protectedRoutes = ["/dashboard", "/entries", "/entries/new"];
 
+    // Is this route protected?
+    const isProtected = protectedRoutes.some((route) =>
+        pathname.startsWith(route)
+    );
 
-    if (protectedRoutes.includes(pathname)) {
-        if (!token) {
-            const loginUrl = new URL("/login", req.url)
-            return NextResponse.redirect(loginUrl)
-        }
+    // Not signed in? Redirect to login.
+    if (isProtected && !token) {
+        return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // 🚫 Redirect logged-in users away from /login
+    // 👋 Already signed in? Redirect away from login page.
     if (pathname === "/login" && token) {
-        const dashboardUrl = new URL("/dashboard", req.url)
-        return NextResponse.redirect(dashboardUrl)
+        return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    return NextResponse.next()
+    return NextResponse.next();
 }
 
+
 export const config = {
-    matcher: ["/dashboard", "/login"],
+    matcher: [
+        "/dashboard",
+        "/entries",
+        "/entries/:path*",
+        "/entries/new",
+        "/login"
+    ],
 }

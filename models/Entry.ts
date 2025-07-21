@@ -14,7 +14,6 @@ const EntrySchema = new Schema({
     tags: [
         { type: String }
     ],
-    // date: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 export const Entry = models.Entry || model<IEntry>("Entry", EntrySchema);

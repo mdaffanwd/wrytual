@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import connectToDatabase from "@/lib/db";
 import { Entry } from "@/models/Entry";
 import EntryList from "@/components/entries/EntryList";
+import { HeaderWithSearch } from "@/components/entries/HeaderWithSearch";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 interface EntryData {
     _id: string;
@@ -17,23 +20,31 @@ interface SearchProps {
     searchParams?: {
         page?: string;
         filter?: string;
+        q?: string;
     };
 }
 
+
 export default async function Page({ searchParams }: SearchProps) {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.id) {
+        return <p>Please, Login!</p>;
+    }
+
+    const userId = session.user.id;
+
+
     const PAGE_SIZE = 15;
     const page = Number(searchParams?.page || "1");
+    const query = searchParams?.q?.toLowerCase() || "";
 
     await connectToDatabase();
 
-    const totalEntries = await Entry.countDocuments();
-    const totalPages = Math.max(Math.ceil(totalEntries / PAGE_SIZE), 1);
-
-    if (page < 1 || page > totalPages) {
-        return notFound();
-    }
-
-    const filter: any = {};
+    const filter: any = {
+        user: userId,
+    };
 
     if (searchParams?.filter === "today") {
         const today = new Date();
@@ -44,6 +55,21 @@ export default async function Page({ searchParams }: SearchProps) {
             $gte: today,
             $lt: tomorrow,
         };
+    }
+
+    if (query) {
+        filter.$or = [
+            { title: { $regex: query, $options: "i" } },
+            { description: { $regex: query, $options: "i" } },
+            { tags: { $elemMatch: { $regex: query, $options: "i" } } },
+        ];
+    }
+
+    const totalEntries = await Entry.countDocuments(filter);
+    const totalPages = Math.max(Math.ceil(totalEntries / PAGE_SIZE), 1);
+
+    if (page < 1 || page > totalPages) {
+        return notFound();
     }
 
     const entriesRaw = await Entry.find(filter)
@@ -59,18 +85,16 @@ export default async function Page({ searchParams }: SearchProps) {
         tags: entry.tags,
         createdAt: entry.createdAt.toISOString(),
     }));
-    console.log(entries)
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">
-            <h1 className="text-3xl font-bold mb-6">Your LearnLog Entries</h1>
+            <HeaderWithSearch query={query} />
 
             <EntryList entries={entries} />
 
-            {/* Pagination */}
             <div className="flex justify-between items-center mt-8">
                 <Button variant="outline" disabled={page === 1}>
-                    <Link href={`/entries?page=${page - 1}`}>← Previous</Link>
+                    <Link href={`/entries?page=${page - 1}&q=${query}`}>← Previous</Link>
                 </Button>
 
                 <span className="text-muted-foreground text-sm">
@@ -78,7 +102,7 @@ export default async function Page({ searchParams }: SearchProps) {
                 </span>
 
                 <Button variant="outline" disabled={page === totalPages}>
-                    <Link href={`/entries?page=${page + 1}`}>Next →</Link>
+                    <Link href={`/entries?page=${page + 1}&q=${query}`}>Next →</Link>
                 </Button>
             </div>
         </div>

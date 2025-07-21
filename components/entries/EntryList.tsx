@@ -1,7 +1,6 @@
 'use client'
 
 import { EntryCard } from "@/components/entries/EntryCard"
-import { useState } from "react"
 
 interface Entry {
     _id: string
@@ -15,15 +14,17 @@ interface EntryListProps {
     entries: Entry[]
 }
 
-export default function EntryList({ entries: initialEntries }: EntryListProps) {
-    const [entries, setEntries] = useState(initialEntries)
-
-    const handleDelete = (id: string) => {
-        setEntries(prev => prev.filter(entry => entry._id !== id))
+export default function EntryList({ entries }: EntryListProps) {
+    if (!entries.length) {
+        return (
+            <p className="text-center text-muted-foreground text-sm mt-6">
+                No entries found. Try a different search or create a new entry!
+            </p>
+        );
     }
 
     return (
-        <>
+        <div className="space-y-4">
             {entries.map(entry => (
                 <EntryCard
                     key={entry._id}
@@ -32,9 +33,8 @@ export default function EntryList({ entries: initialEntries }: EntryListProps) {
                     description={entry.description}
                     tags={entry.tags}
                     date={new Date(entry.createdAt).toLocaleDateString("en-CA")}
-                    onDelete={() => handleDelete(entry._id)}
                 />
             ))}
-        </>
-    )
+        </div>
+    );
 }
