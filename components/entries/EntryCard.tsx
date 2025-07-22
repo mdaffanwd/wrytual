@@ -32,9 +32,10 @@ export function EntryCard({ id, date, title, description, tags, onDelete }: Entr
 
             if (!res.ok) throw new Error("Failed to delete")
 
-            onDelete?.() // revalidate the current page entries
+            // onDelete?.() // revalidate the current page entries
+            router.refresh();
         } catch (err) {
-            console.error("Delete failed:", err)
+            // console.error("Delete failed:", err)
             alert("Could not delete entry")
         }
     }

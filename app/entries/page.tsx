@@ -27,19 +27,13 @@ interface SearchProps {
 
 
 export default async function Page({ searchParams }: SearchProps) {
-
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user?.id) {
-        return <p>Please, Login!</p>;
-    }
-
-    const userId = session.user.id;
-
-
     const PAGE_SIZE = 15;
     const page = Number(searchParams?.page || "1");
     const query = searchParams?.q?.toLowerCase() || "";
+
+    const session = await getServerSession(authOptions);
+
+    const userId = session?.user.id;
 
     await connectToDatabase();
 
@@ -80,13 +74,12 @@ export default async function Page({ searchParams }: SearchProps) {
         .lean();
 
     const entries: EntryData[] = entriesRaw.map((entry) => ({
-        _id: entry._id as string,
+        _id: entry._id?.toString() || "",
         title: entry.title,
         description: entry.description,
         tags: entry.tags,
         createdAt: entry.createdAt.toISOString(),
     }));
-    console.log(entries)
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">

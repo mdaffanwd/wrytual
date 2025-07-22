@@ -1,7 +1,5 @@
-'use client'
 
 import { EntryCard } from "@/components/entries/EntryCard"
-import { useState } from "react"
 
 interface Entry {
     _id: string
@@ -15,12 +13,7 @@ interface EntryListProps {
     entries: Entry[]
 }
 
-export default function EntryList({ entries: initialEntries }: EntryListProps) {
-    const [entries, setEntries] = useState<Entry[]>(initialEntries)
-
-    const handleDelete = (id: string) => {
-        setEntries(prevEntries => prevEntries.filter(entry => entry._id !== id))
-    }
+export default function EntryList({ entries }: EntryListProps) {
 
     if (!entries.length) {
         return (
@@ -40,7 +33,6 @@ export default function EntryList({ entries: initialEntries }: EntryListProps) {
                     description={entry.description}
                     tags={entry.tags}
                     date={new Date(entry.createdAt).toLocaleDateString("en-CA")}
-                    onDelete={() => handleDelete(entry._id)}
                 />
             ))}
         </div>

@@ -13,8 +13,8 @@ export function HeaderWithSearch({ query }: { query: string }) {
         const timeout = setTimeout(() => {
             const params = new URLSearchParams(searchParams.toString());
 
-            if (search) {
-                params.set("q", search);
+            if (search.trim()) {
+                params.set("q", search.trim());
             } else {
                 params.delete("q");
             }
@@ -23,7 +23,7 @@ export function HeaderWithSearch({ query }: { query: string }) {
             router.push(`/entries?${params.toString()}`);
             // router.replace(`/entries?${params.toString()}`);
             router.refresh();
-        }, 300);
+        }, 200);
 
         return () => clearTimeout(timeout);
     }, [search, router, searchParams]);
