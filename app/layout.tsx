@@ -9,6 +9,7 @@ import { Analytics } from '@vercel/analytics/next';
 export const metadata: Metadata = {
   title: "Wrytual - Developer Learning Journal",
   description: "Wrytual helps developers log daily learnings, track growth, and reflect on their coding journey. Write more, grow faster.",
+  keywords: ["Developer Journal", "Learning Tracker", "Code Journal", "Daily Dev Logs", "Wrytual", "Programming Journal"],
   authors: [
     { name: "Mohammad Affan", url: "https://mdaffanworks.vercel.app" },
     { name: "Fazil Shaik", url: "https://fazil-portfolio-remastered.vercel.app" }
