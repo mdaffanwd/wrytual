@@ -11,7 +11,6 @@ export default async function connectToDatabase() {
 
     if (!cached.promise) {
         cached.promise = mongoose.connect(MONGODB_URI, {
-            dbName: "wrytual",
             bufferCommands: false,
         }).then((mongoose) => {
             return mongoose;
