@@ -30,7 +30,7 @@ export function HeaderWithSearch({ query }: { query: string }) {
 
     return (
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <h1 className="text-3xl font-bold">Your LearnLog Entries</h1>
+            <h1 className="text-3xl font-bold">Your Wrytual Entries</h1>
             <SearchBar search={search} setSearch={setSearch} />
         </div>
     );

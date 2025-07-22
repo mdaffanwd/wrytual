@@ -68,7 +68,7 @@ export default function Page() {
         <div className="flex justify-center items-center min-h-screen px-4 bg-muted">
             <Card className="w-full max-w-2xl py-4">
                 <CardContent className="p-6 space-y-6">
-                    <h1 className="text-2xl font-semibold">New LearnLog Entry</h1>
+                    <h1 className="text-2xl font-semibold">New Wrytual Entry</h1>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
