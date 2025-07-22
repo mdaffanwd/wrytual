@@ -49,74 +49,81 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-muted">
-      <Card className="w-full max-w-sm shadow-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
-          <CardDescription className="text-center text-muted-foreground">
-            Login to continue journaling your dev journey 🚀
-          </CardDescription>
-        </CardHeader>
+    <>
+      <div className="flex flex-col min-h-screen w-full items-center justify-center p-6 md:p-10 bg-muted">
+        <p className='max-w-sm mb-1 text-red-400 text-center'>
+          🔒 For security reasons, login/signup with credentials is disabled. <br />
+          Please use <strong className='text-red-500'>Login with Google</strong> to continue.
+        </p>
 
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                {...register('email')}
-                disabled={loading}
-              />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
-            </div>
+        <Card className="w-full max-w-sm shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
+            <CardDescription className="text-center text-muted-foreground">
+              Login to continue journaling your dev journey 🚀
+            </CardDescription>
+          </CardHeader>
 
-            {/* Password */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="password">Password</Label>
-                <a href="#" className="text-sm underline-offset-4 hover:underline">
-                  Forgot?
-                </a>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  {...register('email')}
+                  disabled={loading}
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500">{errors.email.message}</p>
+                )}
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register('password')}
-                disabled={loading}
-              />
-              {errors.password && (
-                <p className="text-xs text-red-500">{errors.password.message}</p>
-              )}
-            </div>
 
-            {/* Submit + Google */}
-            <div className="space-y-3">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Logging in...' : 'Login'}
-              </Button>
-              <Button variant="outline" className="w-full" type="button"
-                onClick={() => signIn("google")}
-                disabled={loading} >
-                Login with Google
-              </Button>
-            </div>
+              {/* Password */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <a href="#" className="text-sm underline-offset-4 hover:underline">
+                    Forgot?
+                  </a>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('password')}
+                  disabled={loading}
+                />
+                {errors.password && (
+                  <p className="text-xs text-red-500">{errors.password.message}</p>
+                )}
+              </div>
 
-            {/* Sign Up Link */}
-            <div className="text-center text-sm text-muted-foreground pt-2">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline text-primary hover:text-primary/80">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              {/* Submit + Google */}
+              <div className="space-y-3">
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Logging in...' : 'Login'}
+                </Button>
+                <Button variant="outline" className="w-full" type="button"
+                  onClick={() => signIn("google")}
+                  disabled={loading} >
+                  Login with Google
+                </Button>
+              </div>
+
+              {/* Sign Up Link */}
+              <div className="text-center text-sm text-muted-foreground pt-2">
+                Don&apos;t have an account?{' '}
+                <Link href="/signup" className="underline text-primary hover:text-primary/80">
+                  Sign up
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   )
 }
