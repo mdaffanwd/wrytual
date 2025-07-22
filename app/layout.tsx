@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import AuthProvider from "@/components/session-provider/session-provider";
 import Header from "@/components/layout/Header";
+import { Analytics } from '@vercel/analytics/next';
 
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
           <ThemeProvider>
             <Header />
             {children}
+            <Analytics />
           </ThemeProvider>
         </AuthProvider>
       </body>
