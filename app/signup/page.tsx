@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useState } from 'react'
-import { cn } from '@/lib/utils' // if you have a classnames util (optional)
 
 const formSchema = z.object({
     name: z.string().min(2, 'Name is too short'),

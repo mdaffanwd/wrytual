@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { useRouter, redirect } from "next/navigation"
+import { redirect } from "next/navigation"
 
 // 🧩 Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
@@ -17,12 +17,21 @@ import { InsightsStats } from "@/components/dashboard/stats/InsightsStats"
 
 export const runtime = 'nodejs'
 
+interface Entry {
+    _id: string
+    title: string
+    description: string
+    tags: string[]
+    createdAt: string
+}
+
+
 export default function Page() {
     const { data: session, status } = useSession()
 
-    const [search, setSearch] = useState("")
+    const [search] = useState("")
     const [entries, setEntries] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [, setLoading] = useState(false)
 
     // 📥 Fetch entries when authenticated
     useEffect(() => {
@@ -38,7 +47,7 @@ export default function Page() {
             const data = await res.json()
 
             // 🧹 Format entries for consistency
-            const formatted = data.map((entry: any) => ({
+            const formatted = data.map((entry: Entry) => ({
                 id: entry._id,
                 date: new Date(entry.createdAt).toISOString().split("T")[0],
                 title: entry.title,
@@ -57,14 +66,15 @@ export default function Page() {
 
     // 📆 Extract valid entry dates (for streaks)
     const entryDates = entries
-        .map((e: any) => {
+        .map((e: Entry) => {
             const date = new Date(e.createdAt)
             return isNaN(date.getTime()) ? null : date.toISOString().split("T")[0]
         })
         .filter((d): d is string => d !== null)
 
     // 🏷️ Unique tags from all entries
-    const tags = Array.from(new Set(entries.flatMap((e: any) => e.tags || [])))
+    const tags = Array.from(new Set(entries.flatMap((e: Entry) => e.tags || [])))
+    console.log(tags)
 
     // ⏳ Loading or redirecting
     if (status === "loading") return <Spinner />

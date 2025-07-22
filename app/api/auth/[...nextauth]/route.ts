@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
 
             return session
         },
-        redirect({ url, baseUrl }) {
+        redirect() {
             // always redirect to dashboard after login
             return '/dashboard'
         }

@@ -7,6 +7,7 @@ import EntryList from "@/components/entries/EntryList";
 import { HeaderWithSearch } from "@/components/entries/HeaderWithSearch";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import { FilterQuery } from "mongoose";
 
 interface EntryData {
     _id: string;
@@ -42,7 +43,7 @@ export default async function Page({ searchParams }: SearchProps) {
 
     await connectToDatabase();
 
-    const filter: any = {
+    const filter: FilterQuery<typeof Entry> = {
         user: userId,
     };
 
@@ -79,12 +80,13 @@ export default async function Page({ searchParams }: SearchProps) {
         .lean();
 
     const entries: EntryData[] = entriesRaw.map((entry) => ({
-        _id: (entry._id as any).toString(),
+        _id: entry._id as string,
         title: entry.title,
         description: entry.description,
         tags: entry.tags,
         createdAt: entry.createdAt.toISOString(),
     }));
+    console.log(entries)
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">

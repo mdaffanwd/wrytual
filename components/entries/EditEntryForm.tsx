@@ -14,7 +14,7 @@ interface Entry {
     tags: string[]
 }
 
-export function EditEntryForm({ entry, isEditing = false }: { entry?: Entry; isEditing?: boolean }) {
+export function EditEntryForm({ entry }: { entry?: Entry; isEditing?: boolean }) {
     const router = useRouter()
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")

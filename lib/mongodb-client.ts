@@ -6,12 +6,12 @@ const options = {};
 if (!uri) throw new Error("Missing MONGODB_URI");
 
 let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
+
 
 if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
 }
 
-clientPromise = global._mongoClientPromise;
+const clientPromise: Promise<MongoClient> = global._mongoClientPromise;
 export default clientPromise;

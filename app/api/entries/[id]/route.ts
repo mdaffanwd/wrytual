@@ -61,10 +61,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (!entry) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
         return NextResponse.json(entry)
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('PATCH error:', error);
+
+        const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
+
         return NextResponse.json(
-            { error: 'Internal Server Error', details: error.message },
+            { error: 'Internal Server Error', details: errorMessage },
             { status: 500 }
         );
     }
@@ -86,8 +90,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         }
 
         return NextResponse.json(entry)
-    } catch (error: any) {
-        console.error("GET entry error:", error)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("GET entry error:", error.message)
+        } else {
+            console.error("GET entry unknown error:", error)
+        }
+
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

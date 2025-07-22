@@ -18,7 +18,7 @@ export default function Page() {
                 <p className="text-muted-foreground">Ready to save your dev brain for real?</p>
                 <Button asChild size="lg">
                     {/* <Link href={'/signup'}>Create Account</Link> */}
-                    <Link href={'/login'}>Let's Start</Link>
+                    <Link href={'/login'}>Let&apos;s Start</Link>
                 </Button>
                 <div>
                     <Link href="/" className="text-sm underline text-muted-foreground hover:text-primary">
