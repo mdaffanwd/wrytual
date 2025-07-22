@@ -25,11 +25,12 @@ export default function Header() {
     const navLinks = [
         { href: "/", label: "Home" },
         { href: "/dashboard", label: "Dashboard" },
+        { href: "/entries", label: "Entries" },
     ];
 
     return (
         <header className="z-50 min-w-screen bg-background/90 border-b shadow-sm backdrop-blur">
-            <div className="max-w-7xl mx-auto w-full px-2 sm:p-4 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto w-full px-2 py-6 sm:p-4 flex items-center justify-between">
                 {/* Left: Logo */}
                 <div className="flex-shrink-0">
                     <Link href="/" aria-label="Go to homepage">
