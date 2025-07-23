@@ -51,7 +51,7 @@ export default function LoginPage() {
   return (
     <>
       <div className="flex flex-col min-h-screen w-full items-center justify-center p-6 md:p-10 bg-muted">
-        <p className='max-w-sm mb-1 text-red-400 text-center'>
+        <p className='max-w-sm mb-3 text-red-400 text-center'>
           🔒 For security reasons, login/signup with credentials is disabled. <br />
           Please use <strong className='text-red-500'>Login with Google</strong> to continue.
         </p>
