@@ -74,7 +74,6 @@ export default function Page() {
 
     // 🏷️ Unique tags from all entries
     const tags = Array.from(new Set(entries.flatMap((e: Entry) => e.tags || [])))
-    console.log(tags)
 
     // ⏳ Loading or redirecting
     if (status === "loading") return <Spinner />

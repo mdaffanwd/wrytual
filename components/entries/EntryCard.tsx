@@ -16,7 +16,7 @@ interface EntryCardProps {
     onDelete?: () => void
 }
 
-export function EntryCard({ id, date, title, description, tags }: EntryCardProps) {
+export function EntryCard({ id, date, title, description, tags, onDelete }: EntryCardProps) {
     const [showFull, setShowFull] = useState(false)
     const isLong = description.length > 150
     const router = useRouter()
@@ -32,7 +32,7 @@ export function EntryCard({ id, date, title, description, tags }: EntryCardProps
 
             if (!res.ok) throw new Error("Failed to delete")
 
-            // onDelete?.() // revalidate the current page entries
+            onDelete?.() // revalidate the current page entries
             router.refresh();
         } catch {
             // console.error("Delete failed:", err)
