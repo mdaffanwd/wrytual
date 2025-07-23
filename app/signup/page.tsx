@@ -9,6 +9,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 const formSchema = z.object({
     name: z.string().min(2, 'Name is too short'),
@@ -20,6 +22,8 @@ type FormData = z.infer<typeof formSchema>
 
 export default function Page() {
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const router = useRouter()
 
     const {
         register,
@@ -31,11 +35,28 @@ export default function Page() {
 
     const onSubmit = async (data: FormData) => {
         setLoading(true)
+        setError('')
+        
         try {
-            // TODO: API call or backend action
-            console.log('Signup data:', data)
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+
+            const result = await response.json()
+
+            if (response.ok) {
+                // Redirect to login page after successful signup
+                router.push('/login?message=Account created successfully. Please log in.')
+            } else {
+                setError(result.error || 'Something went wrong')
+            }
         } catch (err) {
             console.error(err)
+            setError('Network error. Please try again.')
         } finally {
             setLoading(false)
         }
@@ -51,6 +72,12 @@ export default function Page() {
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                        {error && (
+                            <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+                                {error}
+                            </div>
+                        )}
+
                         {/* Name */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Full Name</Label>
@@ -101,6 +128,23 @@ export default function Page() {
                             disabled={loading}
                         >
                             {loading ? 'Signing up...' : 'Sign Up'}
+                        </Button>
+                        
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                    Or continue with
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <Button variant="outline" className="w-full" type="button"
+                            onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
+                            disabled={loading} >
+                            Sign up with Google
                         </Button>
                     </form>
 

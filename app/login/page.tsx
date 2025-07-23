@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
-
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -27,6 +27,10 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const {
     register,
@@ -36,13 +40,34 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   })
 
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message) {
+      setSuccessMessage(message)
+    }
+  }, [searchParams])
+
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true)
+    setError('')
+    setSuccessMessage('')
+    
     try {
-      // TODO: Call your login API here
-      console.log('Login data:', data)
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError('Invalid email or password')
+      } else if (result?.ok) {
+        // Use window.location to ensure proper redirect
+        window.location.href = '/dashboard'
+      }
     } catch (err) {
       console.error(err)
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -51,11 +76,6 @@ export default function LoginPage() {
   return (
     <>
       <div className="flex flex-col min-h-screen w-full items-center justify-center p-6 md:p-10 bg-muted">
-        <p className='max-w-sm mb-1 text-red-400 text-center'>
-          🔒 For security reasons, login/signup with credentials is disabled. <br />
-          Please use <strong className='text-red-500'>Login with Google</strong> to continue.
-        </p>
-
         <Card className="w-full max-w-sm shadow-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
@@ -66,6 +86,18 @@ export default function LoginPage() {
 
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {error && (
+                <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+                  {error}
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                  {successMessage}
+                </div>
+              )}
+
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -85,9 +117,9 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-sm underline-offset-4 hover:underline">
+                  <Link href="/forgot-password" className="text-sm underline-offset-4 hover:underline">
                     Forgot?
-                  </a>
+                  </Link>
                 </div>
                 <Input
                   id="password"
@@ -106,8 +138,20 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
+                
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                
                 <Button variant="outline" className="w-full" type="button"
-                  onClick={() => signIn("google")}
+                  onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
                   disabled={loading} >
                   Login with Google
                 </Button>

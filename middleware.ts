@@ -19,8 +19,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // 👋 Already signed in? Redirect away from login page.
-    if (pathname === "/login" && token) {
+    // 👋 Already signed in? Redirect away from auth pages.
+    if ((pathname === "/login" || pathname === "/signup") && token) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
@@ -34,6 +34,7 @@ export const config = {
         "/entries",
         "/entries/:path*",
         "/entries/new",
-        "/login"
+        "/login",
+        "/signup"
     ],
 }
