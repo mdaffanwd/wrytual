@@ -6,7 +6,7 @@ const UserSchema = new Schema({
     image: { type: String },
     provider: { type: String }, // google, credentials, etc.
     password: { type: String }, // for credentials provider
-    emailVerified: { type: Date },
+    emailVerified: { type: Boolean, default: false },
     resetToken: { type: String },
     resetTokenExpiry: { type: Date },
 }, { timestamps: true });

@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    return null
+                    throw new Error('Email and password are required')
                 }
 
                 await connectToDatabase()
@@ -35,13 +35,18 @@ export const authOptions: NextAuthOptions = {
                 const user = await User.findOne({ email: credentials.email })
                 
                 if (!user || !user.password) {
-                    return null
+                    throw new Error('Invalid email or password')
+                }
+
+                // Check if email is verified for credentials provider
+                if (user.provider === 'credentials' && !user.emailVerified) {
+                    throw new Error('Please verify your email address before logging in')
                 }
 
                 const passwordMatch = await bcrypt.compare(credentials.password, user.password)
                 
                 if (!passwordMatch) {
-                    return null
+                    throw new Error('Invalid email or password')
                 }
 
                 return {
@@ -49,6 +54,7 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     name: user.name,
                     image: user.image,
+                    emailVerified: user.emailVerified,
                 }
             }
         })
@@ -65,6 +71,7 @@ export const authOptions: NextAuthOptions = {
                     name: user.name,
                     image: user.image,
                     provider: account?.provider,
+                    emailVerified: true, // Google accounts are pre-verified
                 })
             }
 

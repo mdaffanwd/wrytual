@@ -60,7 +60,12 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        // Handle specific error messages
+        if (result.error.includes('verify your email')) {
+          setError('Please verify your email address before logging in. Check your inbox for the verification email.')
+        } else {
+          setError('Invalid email or password')
+        }
       } else if (result?.ok) {
         // Use window.location to ensure proper redirect
         window.location.href = '/dashboard'
