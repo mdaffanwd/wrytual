@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -94,6 +94,10 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent>
+            {/* ✅ Suspense-wrapped search param handler */}
+            <Suspense fallback={null}>
+              <LoginMessages setSuccessMessage={setSuccessMessage} />
+            </Suspense>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {error && (
                 <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
@@ -183,4 +187,25 @@ export default function LoginPage() {
       </div>
     </>
   )
+}
+
+function LoginMessages({
+  setSuccessMessage,
+}: {
+  setSuccessMessage: (msg: string) => void
+}) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message) {
+      setSuccessMessage(message)
+
+      const url = new URL(window.location.href)
+      url.searchParams.delete('message')
+      window.history.replaceState(null, '', url.toString())
+    }
+  }, [searchParams, setSuccessMessage])
+
+  return null
 }
