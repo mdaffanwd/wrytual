@@ -143,7 +143,7 @@ export default function Page() {
 
     return (
         <>
-            <div className="flex min-h-screen items-center justify-center bg-muted px-4">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-4">
                 <Card className="w-full max-w-md border-none shadow-xl animate-fade-in">
                     <CardContent className="px-8 py-6 space-y-4">
                         <div className="text-center space-y-1">
