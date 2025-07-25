@@ -36,14 +36,8 @@ export async function POST(request: NextRequest) {
                     { status: 400 }
                 )
             }
-        } else if (existingUser) {
-            return NextResponse.json(
-                { error: 'User with this email already exists. Please Login' },
-                { status: 400 }
-            )
-        }
-        // If this is for password reset, check if user exists
-        if (type === 'reset-password') {
+        } else if (type === 'reset-password') {
+            // If this is for password reset, check if user exists
             const existingUser = await User.findOne({ email })
 
             if (!existingUser) {
