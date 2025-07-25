@@ -20,7 +20,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string(),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -51,7 +51,7 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     setSuccessMessage('')
-    
+
     try {
       const result = await signIn('credentials', {
         email: data.email,
@@ -143,7 +143,7 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
-                
+
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />
@@ -154,7 +154,7 @@ export default function LoginPage() {
                     </span>
                   </div>
                 </div>
-                
+
                 <Button variant="outline" className="w-full" type="button"
                   onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
                   disabled={loading} >
