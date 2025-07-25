@@ -2,17 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendOTPEmail } from '@/lib/email'
 import { User } from '@/models/User'
 import connectToDatabase from '@/lib/db'
+import { Otp } from '@/models/Otp'
 
-// Global store for OTPs (in production, use Redis or database)
-declare global {
-    var otpStore: Map<string, { otp: string; expires: number; type: 'signup' | 'reset-password' }> | undefined
+interface OTPRequestBody {
+    email: string;
+    type?: 'signup' | 'reset-password';
 }
-
-if (!global.otpStore) {
-    global.otpStore = new Map()
-}
-
-const otpStore = global.otpStore
 
 function generateOTP(): string {
     return Math.floor(100000 + Math.random() * 900000).toString()
@@ -20,23 +15,35 @@ function generateOTP(): string {
 
 export async function POST(request: NextRequest) {
     try {
-        const { email, type = 'signup' } = await request.json()
+        const { email, type = 'signup' }: OTPRequestBody = await request.json()
 
         if (!email) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 })
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+        }
 
-        await connectToDatabase()
+        await connectToDatabase();
+
+        // ✅ Rate-limiting based on createdAt instead of expiresAt
+        const recentOtp = await Otp.findOne({ email, type }).sort({ createdAt: -1 })
+        if (recentOtp && recentOtp.createdAt > new Date(Date.now() - 10 * 1000)) {
+            return NextResponse.json(
+                { error: 'Please wait 10 seconds before requesting another OTP' },
+                { status: 429 }
+            )
+        }
 
         const existingUser = await User.findOne({ email })
-        if (type === 'signup') {
-            if (existingUser) {
-                return NextResponse.json(
-                    { error: 'User with this email already exists. Please login.' },
-                    { status: 400 }
-                )
-            }
-        } else if (type === 'reset-password') {
+        if (type === 'signup' && existingUser) {
+            return NextResponse.json(
+                { error: 'User with this email already exists. Please login.' },
+                { status: 400 }
+            )
+        }
+        if (type === 'reset-password') {
             // If this is for password reset, check if user exists
             if (!existingUser) {
                 return NextResponse.json({ error: 'No account found with this email address' }, { status: 404 })
@@ -51,16 +58,20 @@ export async function POST(request: NextRequest) {
 
         // Generate OTP
         const otp = generateOTP()
-        const expires = Date.now() + 10 * 60 * 1000 // 10 minutes
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
 
-        // Store OTP
-        otpStore.set(email, { otp, expires, type })
+        // Clean up existing OTPs for this email
+        await Otp.deleteMany({ email, type })
+
+        // Store OTP in db
+        await Otp.create({ email, otp, type, expiresAt })
 
         // Send email
-        const emailResult = await sendOTPEmail(email, otp, type)
-
-        if (!emailResult.success) {
-            return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
+        try {
+            const emailResult = await sendOTPEmail(email, otp, type)
+            if (!emailResult.success) throw new Error('Email send failed')
+        } catch (err) {
+            return NextResponse.json({ error: 'Failed to send OTP email' }, { status: 500 })
         }
 
         return NextResponse.json({
