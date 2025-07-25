@@ -17,7 +17,7 @@ export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
 
     // I wanna hide header on these routes
-    const hideOnPaths = ["/login", "/signup", "/entries/new-entry"];
+    const hideOnPaths = ["/login", "/signup", "/entries/new-entry", "/forgot-password"];
     const isEditPage = pathname?.includes("/edit/");
 
     if (hideOnPaths.includes(pathname) || isEditPage) return null;
