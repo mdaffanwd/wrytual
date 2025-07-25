@@ -29,7 +29,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  const searchParams = useSearchParams()
 
   const {
     register,
@@ -38,18 +37,6 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
-
-  useEffect(() => {
-    const message = searchParams.get('message')
-    if (message) {
-      setSuccessMessage(message)
-
-      // Remove query param after showing once
-      const url = new URL(window.location.href)
-      url.searchParams.delete('message')
-      window.history.replaceState(null, '', url.toString())
-    }
-  }, [searchParams])
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true)
