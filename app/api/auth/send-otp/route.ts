@@ -26,18 +26,26 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 })
         }
 
+        await connectToDatabase()
+
+        const existingUser = await User.findOne({ email })
+        if (existingUser) {
+            return NextResponse.json(
+                { error: 'User with this email already exists. Please Login' },
+                { status: 400 }
+            )
+        }
         // If this is for password reset, check if user exists
         if (type === 'reset-password') {
-            await connectToDatabase()
             const existingUser = await User.findOne({ email })
-            
+
             if (!existingUser) {
                 return NextResponse.json({ error: 'No account found with this email address' }, { status: 404 })
             }
-            
+
             if (existingUser.provider !== 'credentials') {
-                return NextResponse.json({ 
-                    error: 'This account uses social login. Please use the social login option.' 
+                return NextResponse.json({
+                    error: 'This account uses social login. Please use the social login option.'
                 }, { status: 400 })
             }
         }
@@ -56,9 +64,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
         }
 
-        return NextResponse.json({ 
+        return NextResponse.json({
             message: 'OTP sent successfully',
-            success: true 
+            success: true
         })
 
     } catch (error) {
