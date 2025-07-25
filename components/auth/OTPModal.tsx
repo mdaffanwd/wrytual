@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, KeyboardEvent, useEffect } from 'react'
+import { useState, useRef, KeyboardEvent, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,12 +18,12 @@ interface OTPModalProps {
     setError?: (value: string) => void
 }
 
-export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOTP, type = 'signup', error, setError }: OTPModalProps) {
+export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOTP, error, setError }: OTPModalProps) {
     const [otp, setOtp] = useState(['', '', '', ''])
     const [resendLoading, setResendLoading] = useState(false)
     const [countdown, setCountdown] = useState(0)
     const internalError = error || ''
-    const updateError = setError || (() => { })
+    const updateError = useMemo(() => setError || (() => { }), [setError])
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
             updateError('')
             setTimeout(() => inputRefs.current[0]?.focus(), 100)
         }
-    }, [isOpen])
+    }, [isOpen, updateError])
 
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) return
@@ -68,8 +68,8 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
             try {
                 updateError('')
                 await onVerify(otpString)
-            } catch (err: any) {
-                const message = err?.message || 'Verification failed'
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'Verification failed'
                 updateError(message)
             }
         }
@@ -108,7 +108,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
                     )}
                     <div className="text-center space-y-2">
                         <p className="text-sm text-muted-foreground">
-                            We've sent a {otp.length}-digit verification code to
+                            We&#39;ve sent a {otp.length}-digit verification code to
                         </p>
                         <p className="font-medium">{email}</p>
                     </div>
@@ -142,7 +142,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
 
                     <div className="text-center space-y-2">
                         <p className="text-sm text-muted-foreground">
-                            Didn't receive the code?
+                            Didn&#39;t receive the code?
                         </p>
                         <Button
                             variant="link"

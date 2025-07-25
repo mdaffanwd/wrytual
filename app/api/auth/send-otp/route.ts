@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
         try {
             const emailResult = await sendOTPEmail(email, otp, type)
             if (!emailResult.success) throw new Error('Email send failed')
-        } catch (err) {
+        } catch {
             return NextResponse.json({ error: 'Failed to send OTP email' }, { status: 500 })
         }
 
