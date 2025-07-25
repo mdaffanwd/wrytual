@@ -31,7 +31,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
 
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) return
-        
+
         const newOtp = [...otp]
         newOtp[index] = value
         setOtp(newOtp)
@@ -59,7 +59,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
         setResendLoading(true)
         try {
             await onResendOTP()
-            setCountdown(60) // 60 second cooldown
+            setCountdown(30) // 60 second cooldown
         } catch (error) {
             console.error('Failed to resend OTP:', error)
         } finally {
@@ -130,8 +130,8 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
                             {resendLoading
                                 ? 'Sending...'
                                 : countdown > 0
-                                ? `Resend in ${countdown}s`
-                                : 'Resend Code'
+                                    ? `Resend in ${countdown}s`
+                                    : 'Resend Code'
                             }
                         </Button>
                     </div>
