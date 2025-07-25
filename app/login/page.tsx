@@ -44,6 +44,11 @@ export default function LoginPage() {
     const message = searchParams.get('message')
     if (message) {
       setSuccessMessage(message)
+
+      // Remove query param after showing once
+      const url = new URL(window.location.href)
+      url.searchParams.delete('message')
+      window.history.replaceState(null, '', url.toString())
     }
   }, [searchParams])
 
