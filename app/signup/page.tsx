@@ -12,12 +12,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { OTPModal } from '@/components/auth/OTPModal'
+import { Eye, EyeOff } from 'lucide-react'
 
 const formSchema = z.object({
     name: z.string().min(2, 'Name is too short'),
     email: z.string().email('Invalid email'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().min(6, 'Please confirm your password'),
 })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+    })
 
 type FormData = z.infer<typeof formSchema>
 
@@ -27,6 +33,8 @@ export default function Page() {
     const [showOtpModal, setShowOtpModal] = useState(false)
     const [pendingUserData, setPendingUserData] = useState<FormData | null>(null)
     const [otpLoading, setOtpLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const router = useRouter()
 
     const {
@@ -135,9 +143,9 @@ export default function Page() {
 
     return (
         <>
-            <div className="flex min-h-screen items-center justify-center bg-muted px-4 py-12">
+            <div className="flex min-h-screen items-center justify-center bg-muted px-4">
                 <Card className="w-full max-w-md border-none shadow-xl animate-fade-in">
-                    <CardContent className="p-8 space-y-6">
+                    <CardContent className="px-8 py-6 space-y-4">
                         <div className="text-center space-y-1">
                             <h1 className="text-3xl font-bold">Create your account</h1>
                             <p className="text-sm text-muted-foreground">Start logging what you learn today 🚀</p>
@@ -182,17 +190,56 @@ export default function Page() {
                             {/* Password */}
                             <div className="space-y-2">
                                 <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    {...register('password')}
-                                    disabled={loading}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="••••••••"
+                                        {...register('password')}
+                                        disabled={loading}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        tabIndex={-1}
+                                    >
+
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
                                 {errors.password && (
                                     <p className="text-xs text-red-500">{errors.password.message}</p>
                                 )}
                             </div>
+
+                            {/* Confirm Password */}
+                            <div className="space-y-2">
+                                <div className="relative">
+                                    <Label htmlFor="confirmPassword" className='mb-2'>Confirm Password</Label>
+                                    <Input
+                                        id="confirmPassword"
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        placeholder="••••••••"
+                                        {...register('confirmPassword')}
+                                        disabled={loading}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-1/2 text-muted-foreground hover:text-foreground transition"
+                                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                        tabIndex={-1}
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                                {errors.confirmPassword && (
+                                    <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
+                                )}
+                            </div>
+
 
                             <Button
                                 type="submit"
@@ -220,7 +267,7 @@ export default function Page() {
                             </Button>
                         </form>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <div className="text-center text-sm text-muted-foreground mt-4">
                             Already have an account?{' '}
                             <Link href="/login" className="text-primary underline underline-offset-4 hover:text-primary/80">
                                 Log in
