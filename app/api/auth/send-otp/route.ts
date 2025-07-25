@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendOTPEmail } from '@/lib/email'
 import { User } from '@/models/User'
 import connectToDatabase from '@/lib/db'
-import { Otp } from '@/models/Otp'
+import { Otp } from '@/models/Otp';
+
 
 interface OTPRequestBody {
     email: string;

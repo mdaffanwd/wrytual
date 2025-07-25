@@ -1,15 +1,6 @@
+import { Otp } from '@/models/Otp'
 import { NextRequest, NextResponse } from 'next/server'
 
-// This should match the store in send-otp route (in production, use Redis or database)
-declare global {
-    var otpStore: Map<string, { otp: string; expires: number; type: 'signup' | 'reset-password' }> | undefined
-}
-
-if (!global.otpStore) {
-    global.otpStore = new Map()
-}
-
-const otpStore = global.otpStore
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,30 +10,31 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Email and OTP are required' }, { status: 400 })
         }
 
-        const storedOtpData = otpStore.get(email)
+        const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 })
 
-        if (!storedOtpData) {
+        if (!otpRecord) {
             return NextResponse.json({ error: 'OTP not found or expired' }, { status: 400 })
         }
 
         // Check if OTP is expired
-        if (Date.now() > storedOtpData.expires) {
-            otpStore.delete(email)
+        if (otpRecord.expiresAt < new Date()) {
+            await Otp.deleteOne({ _id: otpRecord._id }) // ✅ Delete expired OTP
             return NextResponse.json({ error: 'OTP has expired' }, { status: 400 })
         }
 
+
         // Check if OTP matches
-        if (storedOtpData.otp !== otp) {
+        if (otpRecord.otp !== otp) {
             return NextResponse.json({ error: 'Invalid OTP' }, { status: 400 })
         }
 
-        // OTP is valid - remove it from store
-        otpStore.delete(email)
+        // ✅ OTP is valid — delete it after use
+        await Otp.deleteOne({ _id: otpRecord._id })
 
-        return NextResponse.json({ 
+        return NextResponse.json({
             message: 'OTP verified successfully',
             success: true,
-            type: storedOtpData.type
+            type: otpRecord.type
         })
 
     } catch (error) {
