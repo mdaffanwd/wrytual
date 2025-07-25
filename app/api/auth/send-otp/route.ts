@@ -38,8 +38,6 @@ export async function POST(request: NextRequest) {
             }
         } else if (type === 'reset-password') {
             // If this is for password reset, check if user exists
-            const existingUser = await User.findOne({ email })
-
             if (!existingUser) {
                 return NextResponse.json({ error: 'No account found with this email address' }, { status: 404 })
             }
