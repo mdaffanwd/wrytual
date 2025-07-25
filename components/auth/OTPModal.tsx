@@ -33,6 +33,15 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
         }
     }, [countdown])
 
+    // Clear OTP on open
+    useEffect(() => {
+        if (isOpen) {
+            setOtp(['', '', '', '', '', ''])
+            updateError('')
+            setTimeout(() => inputRefs.current[0]?.focus(), 100)
+        }
+    }, [isOpen])
+
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) return
 
