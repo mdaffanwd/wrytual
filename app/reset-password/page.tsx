@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -32,8 +32,7 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [token, setToken] = useState('')
-  
-  const searchParams = useSearchParams()
+
   const router = useRouter()
 
   const {
@@ -44,15 +43,6 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   })
 
-  useEffect(() => {
-    const tokenFromUrl = searchParams.get('token')
-    if (tokenFromUrl) {
-      setToken(tokenFromUrl)
-    } else {
-      setError('Invalid reset link. Please request a new password reset.')
-    }
-  }, [searchParams])
-
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
       setError('Invalid reset token')
@@ -62,7 +52,7 @@ export default function ResetPasswordPage() {
     setLoading(true)
     setError('')
     setMessage('')
-    
+
     try {
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
@@ -85,8 +75,7 @@ export default function ResetPasswordPage() {
       } else {
         setError(result.error || 'Something went wrong')
       }
-    } catch (err) {
-      console.error(err)
+    } catch {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
@@ -107,6 +96,9 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="flex flex-col min-h-screen w-full items-center justify-center p-6 md:p-10 bg-muted">
+      <Suspense fallback={null}>
+        <TokenFetcher setToken={setToken} setError={setError} />
+      </Suspense>
       <Card className="w-full max-w-sm shadow-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Reset Password</CardTitle>
@@ -176,4 +168,25 @@ export default function ResetPasswordPage() {
       </Card>
     </div>
   )
+}
+
+function TokenFetcher({
+  setToken,
+  setError,
+}: {
+  setToken: (token: string) => void
+  setError: (msg: string) => void
+}) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const tokenFromUrl = searchParams.get('token')
+    if (tokenFromUrl) {
+      setToken(tokenFromUrl)
+    } else {
+      setError('Invalid reset link. Please request a new password reset.')
+    }
+  }, [searchParams, setToken, setError])
+
+  return null
 }
