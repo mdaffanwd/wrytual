@@ -19,7 +19,7 @@ interface OTPModalProps {
 }
 
 export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOTP, type = 'signup', error, setError }: OTPModalProps) {
-    const [otp, setOtp] = useState(['', '', '', '', '', ''])
+    const [otp, setOtp] = useState(['', '', '', ''])
     const [resendLoading, setResendLoading] = useState(false)
     const [countdown, setCountdown] = useState(0)
     const internalError = error || ''
@@ -36,7 +36,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
     // Clear OTP on open
     useEffect(() => {
         if (isOpen) {
-            setOtp(['', '', '', '', '', ''])
+            setOtp(['', '', '', ''])
             updateError('')
             setTimeout(() => inputRefs.current[0]?.focus(), 100)
         }
@@ -51,7 +51,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
         updateError('')
 
         // Auto-focus next input
-        if (value && index < 5) {
+        if (value && index < 3) {
             inputRefs.current[index + 1]?.focus()
         }
     }
@@ -64,7 +64,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
 
     const handleVerify = async () => {
         const otpString = otp.join('')
-        if (otpString.length === 6) {
+        if (otpString.length === 4) {
             try {
                 updateError('')
                 await onVerify(otpString)
@@ -108,7 +108,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
                     )}
                     <div className="text-center space-y-2">
                         <p className="text-sm text-muted-foreground">
-                            We've sent a 6-digit verification code to
+                            We've sent a {otp.length}-digit verification code to
                         </p>
                         <p className="font-medium">{email}</p>
                     </div>

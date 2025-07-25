@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Email and OTP are required' }, { status: 400 })
         }
 
-        const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 })
+        const otpRecord = await Otp.findOne({ email, otp }).sort({ createdAt: -1 })
 
         if (!otpRecord) {
             return NextResponse.json({ error: 'OTP not found or expired' }, { status: 400 })
