@@ -31,11 +31,17 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 await connectToDatabase()
-                
+
                 const user = await User.findOne({ email: credentials.email })
-                
+
                 if (!user || !user.password) {
                     throw new Error('Invalid email or password')
+                }
+
+                // 🚫 Block login if the account was created via Google or other OAuth providers
+                const provider = (user.provider || '').toLowerCase()
+                if (provider !== 'credentials') {
+                    throw new Error(`This email is associated with a ${provider} account. Please sign in using ${provider}.`)
                 }
 
                 // Check if email is verified for credentials provider
@@ -44,7 +50,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 const passwordMatch = await bcrypt.compare(credentials.password, user.password)
-                
+
                 if (!passwordMatch) {
                     throw new Error('Invalid email or password')
                 }
