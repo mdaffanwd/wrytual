@@ -29,7 +29,14 @@ export async function POST(request: NextRequest) {
         await connectToDatabase()
 
         const existingUser = await User.findOne({ email })
-        if (existingUser) {
+        if (type === 'signup') {
+            if (existingUser) {
+                return NextResponse.json(
+                    { error: 'User with this email already exists. Please login.' },
+                    { status: 400 }
+                )
+            }
+        } else if (existingUser) {
             return NextResponse.json(
                 { error: 'User with this email already exists. Please Login' },
                 { status: 400 }

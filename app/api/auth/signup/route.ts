@@ -14,13 +14,13 @@ const signupSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    
+
     // Validate input
     const validatedData = signupSchema.parse(body)
     const { name, email, password, emailVerified = false } = validatedData
-    
+
     await connectToDatabase()
-    
+
     // Check if user already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-    
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
-    
+
     // Create user
     const user = await User.create({
       name,
@@ -41,9 +41,9 @@ export async function POST(req: NextRequest) {
       provider: 'credentials',
       emailVerified,
     })
-    
+
     return NextResponse.json(
-      { 
+      {
         message: 'User created successfully',
         user: {
           id: user._id.toString(),
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     )
-    
+
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-    
+
     console.error('Signup error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
