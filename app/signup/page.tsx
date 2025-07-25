@@ -40,7 +40,7 @@ export default function Page() {
     const onSubmit = async (data: FormData) => {
         setLoading(true)
         setError('')
-        
+
         try {
             // First, send OTP to email
             const otpResponse = await fetch('/api/auth/send-otp', {
@@ -199,9 +199,9 @@ export default function Page() {
                                 className="w-full"
                                 disabled={loading}
                             >
-                                {loading ? 'Sending verification...' : 'Sign Up'}
+                                {loading ? 'Sending otp...' : 'Sign Up'}
                             </Button>
-                            
+
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
                                     <span className="w-full border-t" />
@@ -212,7 +212,7 @@ export default function Page() {
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <Button variant="outline" className="w-full" type="button"
                                 onClick={() => signIn("google", { callbackUrl: '/dashboard' })}
                                 disabled={loading} >
@@ -238,6 +238,8 @@ export default function Page() {
                 loading={otpLoading}
                 onResendOTP={handleResendOTP}
                 type="signup"
+                error={error}
+                setError={setError}
             />
         </>
     )
