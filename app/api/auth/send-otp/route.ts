@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         const recentOtp = await Otp.findOne({ email, type }).sort({ createdAt: -1 })
         if (recentOtp && recentOtp.createdAt > new Date(Date.now() - 30 * 1000)) {
             return NextResponse.json(
-                { error: 'Please wait 10 seconds before requesting another OTP' },
+                { error: 'Please wait 30 seconds before requesting another OTP' },
                 { status: 429 }
             )
         }

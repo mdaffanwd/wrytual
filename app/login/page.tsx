@@ -84,7 +84,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-sm shadow-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
-            <CardDescription className="text-center text-muted-foreground">
+            <CardDescription className="text-center text-muted-foreground mb-3">
               Login to continue journaling your dev journey 🚀
             </CardDescription>
           </CardHeader>
@@ -111,6 +111,10 @@ export default function LoginPage() {
                   type="email"
                   placeholder="you@example.com"
                   {...register('email')}
+                  onChange={(e) => {
+                    setSuccessMessage('')
+                    register('email').onChange(e)
+                  }}
                   disabled={loading}
                 />
                 {errors.email && (

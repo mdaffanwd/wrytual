@@ -14,12 +14,16 @@ interface OTPModalProps {
     loading: boolean
     onResendOTP: () => Promise<void>
     type?: 'signup' | 'reset-password'
+    error?: string
+    setError?: (value: string) => void
 }
 
-export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOTP, type = 'signup' }: OTPModalProps) {
+export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOTP, type = 'signup', error, setError }: OTPModalProps) {
     const [otp, setOtp] = useState(['', '', '', '', '', ''])
     const [resendLoading, setResendLoading] = useState(false)
     const [countdown, setCountdown] = useState(0)
+    const internalError = error || ''
+    const updateError = setError || (() => { })
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
     useEffect(() => {
@@ -35,6 +39,7 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
         const newOtp = [...otp]
         newOtp[index] = value
         setOtp(newOtp)
+        updateError('')
 
         // Auto-focus next input
         if (value && index < 5) {
@@ -51,7 +56,13 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
     const handleVerify = async () => {
         const otpString = otp.join('')
         if (otpString.length === 6) {
-            await onVerify(otpString)
+            try {
+                updateError('')
+                await onVerify(otpString)
+            } catch (err: any) {
+                const message = err?.message || 'Verification failed'
+                updateError(message)
+            }
         }
     }
 
@@ -83,6 +94,9 @@ export function OTPModal({ isOpen, onClose, onVerify, email, loading, onResendOT
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                    {error && (
+                        <p className="text-sm text-red-500 text-center">{internalError}</p>
+                    )}
                     <div className="text-center space-y-2">
                         <p className="text-sm text-muted-foreground">
                             We've sent a 6-digit verification code to

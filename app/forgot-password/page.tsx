@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
   const handleEmailSubmit = async (data: EmailFormData) => {
     setLoading(true)
     setError('')
-    
+
     try {
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
@@ -121,15 +121,15 @@ export default function ForgotPasswordPage() {
   const handlePasswordReset = async (data: ResetFormData) => {
     setLoading(true)
     setError('')
-    
+
     try {
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          email, 
+        body: JSON.stringify({
+          email,
           password: data.password,
         }),
       })
@@ -241,6 +241,8 @@ export default function ForgotPasswordPage() {
         loading={otpLoading}
         onResendOTP={handleResendOTP}
         type="reset-password"
+        error={error}
+        setError={setError}
       />
     </>
   )
