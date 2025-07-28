@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://wrytual.vercel.app
+
+# Sitemaps
+Sitemap: https://wrytual.vercel.app/sitemap.xml
