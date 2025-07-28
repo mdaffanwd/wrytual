@@ -5,7 +5,6 @@ import AuthProvider from "@/components/session-provider/session-provider";
 import Header from "@/components/layout/Header";
 import { Analytics } from '@vercel/analytics/next';
 import Script from "next/script";
-import Head from "next/head";
 
 
 export const metadata: Metadata = {
@@ -41,9 +40,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
+      <head>
         <meta name="google-site-verification" content="SWZ6hdAyL-XIlsJ-LJaqDSq-WT7o4Thyr1e2NtwLTcE" />
-      </Head>
+      </head>
       <body
         className={`min-h-screen`}
       >
