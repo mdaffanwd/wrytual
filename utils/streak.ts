@@ -28,6 +28,9 @@ export const calculateStreak = (dates: string[]): { streak: number; emoji: strin
 export const calculateLongestStreak = (dates: string[]): number => {
     const uniqueSorted = Array.from(new Set(dates)).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
 
+    if (uniqueSorted.length < 2) return uniqueSorted.length
+
+
     let longest = 0
     let currentStreak = 1
 
