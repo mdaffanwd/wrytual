@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import AuthProvider from "@/components/session-provider/session-provider";
 import Header from "@/components/layout/Header";
 import { Analytics } from '@vercel/analytics/next';
+import Script from "next/script";
 
 
 export const metadata: Metadata = {
@@ -42,6 +43,13 @@ export default function RootLayout({
       <body
         className={`min-h-screen`}
       >
+        {/* 🔥 Ahrefs Analytics Script */}
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="rNWZYLcud82ZyTRq9lFOpw"
+          strategy="afterInteractive"
+          async
+        />
         <AuthProvider>
           <ThemeProvider>
             <Header />
